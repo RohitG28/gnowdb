@@ -5,9 +5,12 @@
             [gnowdb.neo4j.gdriver :as gdriver]
             [gnowdb.neo4j.gcust :as gcust]
             [gnowdb.neo4j.grcs :as grcs]
+            [gnowdb.neo4j.grcs_locks :as grcs_locks]
+            [gnowdb.neo4j.grcs_revert :as grcs_revert]
             [gnowdb.neo4j.dumprestore :as dumprestore]
             [gnowdb.spec.files :as files]
             [gnowdb.spec.init :as init]
+            [gnowdb.neo4j.gqb :as gqb]
             [async-watch.core :refer [changes-in cancel-changes]]))
 
 (import '[java.io PushbackReader])
@@ -31,6 +34,7 @@
         ]
                                         ;Add readbackfunctions here with the desired data
     (gdriver/getNeo4jDBDetails details)
+    (gdriver/getRCSEnabled details)
     (gneo/getUUIDEnabled details)
     (gcust/getCustomPassword details)
     (dumprestore/getBackupDirectory details)
@@ -51,8 +55,9 @@
                     :backup-directory "backups"
                     :data-directory "src/gnowdb/media"
                     :uuidEnabled true
+                    :rcsEnabled true
                     :data-storage-levels 3
-                    :rcs-directory "rcsrepo"
+                    :rcs-directory "rcs-repo"
                     :rcs-dir-levels 3
                     }
         ]
