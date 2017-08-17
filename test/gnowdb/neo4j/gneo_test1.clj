@@ -30,7 +30,7 @@
   :indexesAdded 0,
   :relationshipsDeleted 1},
  :summaryString "ContainsUpdates :true ;RelationshipsDeleted :1 ;"} 
- (deleteRelations :fromNodeLabel ["test"] :toNodeLabel ["test1"])
+ (deleteRelation :fromNodeLabels ["test"] :toNodeLabels ["test1"])
         )
     )
     )
@@ -50,7 +50,7 @@
   :indexesAdded 0,
   :relationshipsDeleted 1},
  :summaryString "ContainsUpdates :true ;RelationshipsDeleted :1 ;"} 
- (deleteRelations :fromNodeLabel ["test3"] :toNodeParameters {"name" "t-db"} :toNodeLabel ["test"])
+ (deleteRelation :fromNodeLabels ["test3"] :toNodeParameters {"name" "t-db"} :toNodeLabels ["test"])
           )
       )
 
@@ -64,7 +64,7 @@
     (is (= (select-keys {:labels ["test3"],
  :properties {"name" "t-db1"},
  :outNodes `({:labels "rel2", :properties {}, :toNode 22}),
- :inNodes `()} [:labels :properties]) (select-keys (getNeighborhood :label "test3" :parameters {"name" "t-db1"}) [:labels :properties])
+ :inNodes `()} [:labels :properties]) (select-keys (getNeighborhood :labels ["test3"] :parameters {"name" "t-db1"}) [:labels :properties])
       )
     )
 
@@ -93,6 +93,73 @@
         )
 
     )
+
+)
+(ns gnowdb.neo4j.gneo_test2
+  (:require [clojure.test :refer :all]
+              [gnowdb.neo4j.gneo :refer :all]
+            [gnowdb.neo4j.gdriver :refer :all]
+
+  
+            )
+)
+(deftest createAttributeType-test
+    (testing "Creating a node  without qualifiers"
+        (is (= {:results [()],
+ :summary
+ {:summaryMap
+  {:relationshipsCreated 0,
+   :containsUpdates true,
+   :nodesCreated 1,
+   :nodesDeleted 0,
+   :indexesRemoved 0,
+   :labelsRemoved 0,
+   :constraintsAdded 0,
+   :propertiesSet 6,
+   :labelsAdded 1,
+   :constraintsRemoved 0,
+   :indexesAdded 0,
+   :relationshipsDeleted 0},
+  :summaryString
+  "ContainsUpdates :true ;NodesCreated :1 ;PropertiesSet :6 ;LabelsAdded :1 ;"}}
+ (createAttributeType :_name "t_db1" :_datatype "java.lang.Boolean")
+            )
+        )
+
+    )
+
+    (testing "Creating a node with qualifiers"
+        (is (= {:results [()],
+ :summary
+ {:summaryMap
+  {:relationshipsCreated 0,
+   :containsUpdates true,
+   :nodesCreated 1,
+   :nodesDeleted 0,
+   :indexesRemoved 0,
+   :labelsRemoved 0,
+   :constraintsAdded 0,
+   :propertiesSet 6,
+   :labelsAdded 1,
+   :constraintsRemoved 0,
+   :indexesAdded 0,
+   :relationshipsDeleted 0},
+  :summaryString
+  "ContainsUpdates :true ;NodesCreated :1 ;PropertiesSet :6 ;LabelsAdded :1 ;"}} 
+  (createAttributeType :_name "t_db2" :_datatype "java.lang.Boolean" :subjectQualifier `("t_db2" "t_db3") :attributeQualifier `("t_db4" "t_db5") :valueQualifier `("t_db6" "t_db7") :execute? true)
+            )
+        )
+
+    )
+
+
+
+
+    (testing "Delete changes"
+      (runQuery {:query "match (n:AttributeType {_name:{a}}),(n1:AttributeType {_name:{b}}) detach delete n,n1" :parameters {"a" "t_db1" "b" "t_db2"}})
+
+    )
+
 
 )
 
